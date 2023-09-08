@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">DateandTimePickerDialogs</string>
+    <string name="birthdate">Birth Date</string>
+    <string name="dd_mm_yyyy">DD/MM/YYYY</string>
+    <string name="_11_30pm">11:30PM</string>
+    <string name="birth_time">Birth time</string>
+    <string name="save">Save</string>
+    <string name="todo">TODO</string>
+    <string name="hh_mm">HH:MM</string>
+</resources>
