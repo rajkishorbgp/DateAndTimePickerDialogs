@@ -1,20 +1,23 @@
 package com.rajkishorbgp.dateandtimepickerdialogs
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.DatePickerDialog
-import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
+import android.app.TimePickerDialog
+import android.content.Context
 import android.os.Bundle
-import android.util.Log
+import android.view.View
+import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
+import android.widget.DatePicker
 import android.widget.EditText
-import com.google.android.material.timepicker.MaterialTimePicker
-import com.google.android.material.timepicker.TimeFormat
-import com.rajkishorbgp.dateandtimepickerdialogs.R
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
-import kotlin.math.log
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -33,57 +36,58 @@ class MainActivity : AppCompatActivity() {
         button = findViewById(R.id.saveButton)
 
         editTextDate.setOnClickListener {
-            openDatePicker()
-        }
+            hideKeyboard(editTextDate)
+            showDatePicker()
 
+        }
         editTextTime.setOnClickListener {
-            openTimePicker()
+            hideKeyboard(editTextDate)
+            showTimePickerDialog()
         }
 
         button.setOnClickListener {
-            // Handle button click here
+            Toast.makeText(this@MainActivity,"Save",Toast.LENGTH_SHORT).show()
         }
     }
 
-//    @SuppressLint("SetTextI18n")
-//    private fun openTimePicker() {
-//        val picker = MaterialTimePicker.Builder()
-//            .setTimeFormat(TimeFormat.CLOCK_12H)
-//            .setHour(12)
-//            .setMinute(0)
-//            .setTitleText("Set Birth Time")
-//            .build()
-//        picker.show(supportFragmentManager, "TAG")
-//
-//    }
+    private fun showTimePickerDialog() {
+        val calendar = Calendar.getInstance()
+        val hourOfDay = calendar.get(Calendar.HOUR_OF_DAY)
+        val minute = calendar.get(Calendar.MINUTE)
 
-    private fun openTimePicker() {
-        val picker = MaterialTimePicker.Builder()
-            .setTimeFormat(TimeFormat.CLOCK_12H)
-            .setHour(12)
-            .setMinute(0)
-            .setTitleText("Set Birth Time")
-            .build()
-        picker.show(supportFragmentManager, "TAG")
+        val timePickerDialog = TimePickerDialog(
+            this@MainActivity,
+            { _, selectedHourOfDay, selectedMinute ->
+                calendar.set(Calendar.HOUR_OF_DAY, selectedHourOfDay)
+                calendar.set(Calendar.MINUTE, selectedMinute)
 
+                val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault()) //HH:mm
+                val formattedTime = timeFormat.format(calendar.time)
+                editTextTime.setText(formattedTime)
+            },
+            hourOfDay,
+            minute,
+            false // Set to true to use the 24-hour format
+        )
+        timePickerDialog.show()
     }
-
-
-
-    private fun openDatePicker() {
+    private fun showDatePicker() {
         val datePickerDialog = DatePickerDialog(
             this,
-            { datePicker, year: Int, monthOfYear: Int, dayOfMonth: Int ->
-                val selectedData = Calendar.getInstance()
-                selectedData.set(year, monthOfYear, dayOfMonth)
-                val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-                val formattedDate = dateFormat.format(selectedData.time)
-                editTextDate.setText(formattedDate) // Corrected setText method
+            DatePickerDialog.OnDateSetListener { view: DatePicker, year: Int, monthOfYear: Int, dayOfMonth: Int ->
+                val selectedDate = "${dayOfMonth.toString().padStart(2, '0')}-${(monthOfYear + 1).toString().padStart(2, '0')}-$year"
+                editTextDate.setText(selectedDate)
             },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
+            // Set initial date in DatePickerDialog (optional)
+            2023,  // Initial year
+            0,     // Initial month (0 is January, 11 is December)
+            1      // Initial day
         )
+        // Show the DatePickerDialog
         datePickerDialog.show()
+    }
+    private fun hideKeyboard(view: View) {
+        val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 }
