@@ -1,13 +1,11 @@
 package com.rajkishorbgp.dateandtimepickerdialogs
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
 import android.os.Bundle
 import android.view.View
-import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.DatePicker
@@ -51,7 +49,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showTimePickerDialog() {
-        val calendar = Calendar.getInstance()
         val hourOfDay = calendar.get(Calendar.HOUR_OF_DAY)
         val minute = calendar.get(Calendar.MINUTE)
 
